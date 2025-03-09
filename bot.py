@@ -5,6 +5,8 @@ import logging
 from discord.ext import commands
 from dotenv import load_dotenv
 from agent import MistralAgent
+from meme_api import MemeAPI
+from x_rotd import X_ROTD
 
 PREFIX = "!"
 
@@ -22,6 +24,10 @@ bot = commands.Bot(command_prefix=PREFIX, intents=intents)
 # Import the Mistral agent from the agent.py file
 agent = MistralAgent()
 
+# Import the MemeAPI agent
+meme_api = MemeAPI()
+
+x_rotd = X_ROTD()
 
 # Get the token from the environment variables
 token = os.getenv("DISCORD_TOKEN")
@@ -59,6 +65,26 @@ async def on_message(message: discord.Message):
 
     # Send the response back to the channel
     await message.reply(response)
+
+@bot.command(name="send_image", help="sends an image")
+async def send_image(ctx, *, arg=None):
+    # Get the meme data
+    meme_data = meme_api.get_meme()
+    image_url = meme_data["url"]
+    await ctx.send(image_url)
+
+@bot.command(name="rotd", help="gives rizz of the day")
+async def give_rotd(ctx, *, arg=None):
+    flirtatious_tweet = x_rotd.get_most_flirtatious_tweet()
+    print(flirtatious_tweet)
+    await ctx.send(flirtatious_tweet['tweet'])
+
+
+@bot.command(name="send_sticker1", help="sends sticker 1: +1000 aura")
+async def send_image(ctx, *, arg=None):
+    # Get the meme data
+    image = "1.png"
+    await ctx.send(file=discord.File(image))
 
 
 # Commands
